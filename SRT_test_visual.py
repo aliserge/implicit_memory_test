@@ -7,6 +7,7 @@ import time
 from pydub import AudioSegment
 from pydub.playback import play
 import hashlib
+from attempt_post_proc import post_processing
 
 repeats = -1
 user_name = ''
@@ -15,7 +16,6 @@ sleep_time = 0.3
 results = []
 previous_time = -1
 previous_square_id = -1
-#quantity = 0
 seq_a = []
 seq_b = []
 dict_seq_a = {}
@@ -312,10 +312,10 @@ def keypressed(event):
         print(type(event.char),event.char)
         if int(event.char) == previous_square_id:
             key_info.append(True)
-            filename = 'positive-notification.wav'
+            filename = 'sounds/positive-notification.wav'
         else:
             key_info.append(False)
-            filename = 'wrong-answer.wav'
+            filename = 'sounds/wrong-answer.wav'
         play_sound(filename)
 
     # указатель случайных квадратов
@@ -351,9 +351,7 @@ def play_sound(filename):
 
 # оформление окна
 window = tk.Tk()
-# fulscreen
-#w, h = window.winfo_screenwidth(), window.winfo_screenheight()
-#window.geometry("%dx%d+0+0" % (w, h))
+
 
 window.title("Statistical learning test")
 window.rowconfigure([0,1,2,3], minsize = 200, weight = 1)
@@ -377,8 +375,6 @@ btn_ready = tk.Button(fr_info_ready, text = "Start", font = ('Helvetica', '20'),
 fr_info_ready.grid(row = 1, column = 2, padx = 5, pady = 5)
 label_name.grid(row = 0, column = 1, sticky = "n")
 info.grid(row = 1, column = 1)
-#label_quantity.grid(row = 2, column = 1)
-#entry_quantity.grid(row = 3, column = 1)
 label_birth.grid(row = 4, column = 1)
 entry_birth.grid(row = 5, column = 1)
 btn_ready.grid(row = 6, column = 1, sticky = "s")
@@ -415,4 +411,4 @@ with open('user_to_hash.txt', 'a') as user_to_hash:
 
 results_file_name = f'res_{hash_user}.txt'
 print_results(results, results_file_name)
-#post_processing(results, results_file_name)
+post_processing(results_file_name)
