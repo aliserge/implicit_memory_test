@@ -6,6 +6,7 @@ import random
 import time
 from pydub import AudioSegment
 from pydub.playback import play
+import threading
 import hashlib
 from attempt_post_proc import post_processing
 
@@ -23,6 +24,9 @@ dict_seq_b = {}
 our_seq = "A"
 position = 0
 variants = (1, 3, 7, 9)
+variants_to_keys = {"1":1,"3":2,"7":3,"9":4}
+
+
 n = 0
 Is_key_pressed = False
 filename = ''
@@ -123,11 +127,15 @@ def making_dictionaries(seq):
 def print_results(results, results_file_name):   # печатаем результаты в консоль
 
     with open(results_file_name, 'w') as out_file:
+        out_file.write('SeqA:\t'+','.join(str(el) for el in seq_a)+'\n')
+        out_file.write('SeqB:\t'+','.join(str(el) for el in seq_b)+'\n')
         out_file.write("Square\tStart time\tDone time\tDelta\tRatio\tCorrectness\tSequence\n")
         for click in results:
-            out_file.write(f"{click[0]}\t{click[1]}\t{click[2]}\t{click[3]}\t{click[4]}\t{click[5]}\t{click[6]}\n")
+            
+            key_var = variants_to_keys[click[0]] if click[0] in variants_to_keys else 'ErrKey:' + click[0]
+            out_file.write(f"{key_var}\t{click[1]}\t{click[2]}\t{click[3]}\t{click[4]}\t{click[5]}\t{click[6]}\n")
 
-
+'''
 def post_processing(results_file_name):  # ratios
     
     with open(results_file_name, 'r') as outfile:
@@ -137,7 +145,7 @@ def post_processing(results_file_name):  # ratios
     results = [ [int(line[0]), dt.strptime(line[1]), dt.strptime(line[2]), float(line[3]), float(line[4]),
                  bool(line[5]),line[6] ] for line in results]
     print(results)
-    
+'''    
         
 def show_square(square_id):  # рисуем квадрат
     if square_id == 7:
@@ -344,10 +352,9 @@ def keypressed(event):
         Is_key_pressed = False
  
 def play_sound(filename):
-    song = AudioSegment.from_wav(filename)
-    play(song)
-        
-
+    sound = AudioSegment.from_wav(filename)
+    t = threading.Thread(target=play, args=(sound,))
+    t.start()
 
 # оформление окна
 window = tk.Tk()
@@ -393,7 +400,6 @@ according to appearing red squares
 in the corners of the screen 
 as accurate and rapid as possible""", font = ('Helvetica', '12'))
 btn_start = tk.Button(fr_rules_button, text = "Ready", font = ('15'), command = starting)
-
 
 # Прорисовка квадратов
 for i in (1,3,7,9):

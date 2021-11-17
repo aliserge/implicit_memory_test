@@ -6,6 +6,7 @@ import random
 import time
 from pydub import AudioSegment
 from pydub.playback import play
+import threading
 import hashlib
 from attempt_post_proc import post_processing
 
@@ -18,7 +19,7 @@ songs = (AudioSegment.from_wav(filename1), AudioSegment.from_wav(filename2), Aud
 repeats = -1
 user_name = ''
 
-sleep_time = 0.3
+sleep_time = 0.5
 results = []
 previous_time = -1
 previous_square_id = -1
@@ -37,8 +38,6 @@ circles = 0
 circles_to_learn = 0
 birth = ''
 change_seq_chance = 0
-
-
 
 def parameters_input():
     global repeats
@@ -136,7 +135,10 @@ def making_dictionaries(seq):
 def print_results(results, results_file_name):   # печатаем результаты в консоль
     #for row in results:
     #    print(row)
+    
     with open(results_file_name, 'w') as out_file:
+        out_file.write('SeqA:\t'+','.join(str(el) for el in seq_a)+'\n')
+        out_file.write('SeqB:\t'+','.join(str(el) for el in seq_b)+'\n')
         out_file.write("Square\tStart time\tDone time\tDelta\tRatio\tCorrectness\tSequence\n")
         for click in results:
             out_file.write(f"{click[0]}\t{click[1]}\t{click[2]}\t{click[3]}\t{click[4]}\t{click[5]}\t{click[6]}\n")
@@ -313,12 +315,8 @@ def btn_pressed(btn_number):
         key_info.append(ratio)
         previous_time = current_time
         
-    # указатель случайных квадратов
-        key_info.append(our_seq)
-        
-        results.append(key_info)    
-        
         btn_disabled()
+        window.update()
 
     # сопоставление кнопки и звука
 
@@ -326,7 +324,11 @@ def btn_pressed(btn_number):
             key_info.append(True)
         else:
             key_info.append(False)
-
+        
+        # указатель случайных квадратов
+        key_info.append(our_seq)
+        results.append(key_info)    
+    
     # прощание
         if n == repeats * 12:
             fr_info_ready.grid_forget()
@@ -337,15 +339,18 @@ def btn_pressed(btn_number):
             return
         
         square_id = decisioners()
+        time.sleep(sleep_time)
         play_number(square_id)
         previous_square_id = square_id
 
         btn_enabled()
         previous_time = dt.datetime.now()
         Is_key_pressed = False 
+    
         
 def play_number(square_id):
-    play(songs[square_id - 1])
+    t = threading.Thread(target=play, args=(songs[square_id - 1],))
+    t.start()
 
 
 
