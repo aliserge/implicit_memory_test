@@ -1,3 +1,0 @@
-repeats=4
-change_seq_chance=50
-circles_to_learn=0
