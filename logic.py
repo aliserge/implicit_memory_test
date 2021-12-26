@@ -5,14 +5,14 @@ import time
 import hashlib
 from configparser import ConfigParser
 from collections import namedtuple
-from attempt_post_proc import post_processing
+from post_proc_pandas import post_processing
 
 class test_logic(QObject):
     number_to_show_event = pyqtSignal(str)
     test_ended = pyqtSignal()
     play_sound_signal = pyqtSignal(str)
     
-    User_record = namedtuple('User_record','Key Correctness Sequence Start_time Stop_time RT')
+    User_record = namedtuple('User_record','Sequence Position Right_answer User_answer Correctness Start_time Stop_time RT')
     
     def __init__(self, parent=None, reverse_seq=False):
         super().__init__(parent)
@@ -111,9 +111,11 @@ class test_logic(QObject):
         # тайминг
         self.stop_time = self.timer()
         ping = self.stop_time - self.start_time
+        right_answer = str(self.return_current_el())
         
-        correctness = key == str(self.return_current_el())
-        key_record = self.User_record(Key = key, Correctness = correctness, Sequence = self.our_seq, Start_time = self.start_time, Stop_time = self.stop_time, RT = ping)
+        correctness = key == right_answer
+        key_record = self.User_record(Sequence=self.our_seq, Position=self.position, Right_answer=right_answer,
+            User_answer=key, Correctness=correctness, Start_time = self.start_time, Stop_time = self.stop_time, RT = ping.total_seconds())
         self.key_info.append(key_record)
         self.play_sound_signal.emit(str(correctness))
         
@@ -130,8 +132,7 @@ class test_logic(QObject):
             out_file.write('SeqA:\t'+','.join(str(el) for el in self.seq_a)+'\n')
             out_file.write('SeqB:\t'+','.join(str(el) for el in self.seq_b)+'\n')
             out_file.write('\t'.join(self.User_record._fields)+'\n')
-            #out_file.write("Square\tStart time\tDone time\tDelta\tRatio\tCorrectness\tSequence\n")
             for key_record in self.key_info:
                 out_file.write("\t".join([str(el) for el in key_record])+"\n")
         
-        #post_processing(results_file_name)
+        post_processing(results_file_name)

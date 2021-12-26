@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+import os
+
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit, QGridLayout, QVBoxLayout, QMessageBox, QHBoxLayout, QSizePolicy
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QEventLoop, QTimer
 from PyQt5.QtGui import QPalette
@@ -7,6 +9,7 @@ from PyQt5.QtGui import QPalette
 from PyQt5.QtMultimedia import QSound
 from user_input import User_input
 
+sound_dir = 'sounds'
 
 class Graphic(QWidget):
     next_element_needed = pyqtSignal()
@@ -18,10 +21,10 @@ class Graphic(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
-        self.sounds = [QSound("sounds/one.wav"),
-            QSound("sounds/two.wav"),
-            QSound("sounds/three.wav"),
-            QSound("sounds/four.wav") ]
+        self.sounds = [QSound(os.path.join(sound_dir, "one.wav")),
+            QSound(os.path.join(sound_dir, "two.wav")),
+            QSound(os.path.join(sound_dir, "three.wav")),
+            QSound(os.path.join(sound_dir, "four.wav")) ]
         self.red = QPalette()
         self.red.setColor(QPalette.Button, Qt.red)
         self.green = QPalette()

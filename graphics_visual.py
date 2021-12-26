@@ -1,24 +1,27 @@
 #!/usr/bin/python3
 
+import os
+
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit, QGridLayout, QVBoxLayout, QMessageBox
 from PyQt5.QtGui import QPalette
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QEventLoop, QTimer
 from PyQt5.QtMultimedia import QSound
 from user_input import User_input
 
+sound_dir = 'sounds'
 
 class Angle_square(QWidget):
+    size = 300
     def __init__(self):
         super().__init__()
         self.setAutoFillBackground(True)
         self.initUI()
     def initUI(self):
-        self.setFixedSize(300, 300)
+        self.setFixedSize(self.size, self.size)
         self.red = QPalette()
         self.red.setColor(QPalette.Window, Qt.red)
         self.white = QPalette()
         self.white.setColor(QPalette.Window, Qt.white)
-        #self.become_red()
 
     def become_red(self):
         self.setPalette(self.red)
@@ -40,9 +43,8 @@ class Graphic(QWidget):
         super().__init__()
         self.squares = {1: Angle_square(), 2: Angle_square(), 3: Angle_square(), 4: Angle_square()}
         self.wait_for_key = False
-        self.correct_answer_sound = QSound("sounds/positive-notification.wav")
-        self.wrong_answer_sound = QSound("sounds/wrong-answer.wav")
-        
+        self.correct_answer_sound = QSound(os.path.join(sound_dir, "positive-notification.wav"))
+        self.wrong_answer_sound = QSound(os.path.join(sound_dir, "wrong-answer.wav"))
         
         self.initUI()
     
@@ -83,11 +85,13 @@ as accurate and rapid as possible""")
             super().keyPressEvent(e)
             return
         self.wait_for_key = False
+        
         key = e.text()
-        print("Key_catched: ", )
+        print("Key_catched: ", key)
         
         if key in self.keys_to_numbers.keys():
             key = self.keys_to_numbers[key]
+        
         self.press_event.emit(key)
         
         for square in self.squares.values():
