@@ -68,7 +68,7 @@ as accurate and rapid as possible""")
         for btn in self.btns:
             btn.setEnabled(True)
         
-        self.start_event.emit(self.user_name_date.name_line.text(), self.user_name_date.date_birth_line.text())
+        self.start_event.emit(*self.user_name_date.user_data())
         self.next_element_needed.emit()
     
     def btn_1(self):

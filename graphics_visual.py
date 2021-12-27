@@ -70,7 +70,7 @@ in the corners of the screen
 as accurate and rapid as possible""")
         for square in self.squares.values():
             square.become_white()
-        self.start_event.emit(self.user_name_date.name_line.text(), self.user_name_date.date_birth_line.text())
+        self.start_event.emit(*self.user_name_date.user_data())
         self.next_element_needed.emit()
     
     def show_square(self, square_number):

@@ -24,11 +24,14 @@ class test_logic(QObject):
         self.numbers_to_learn = int(config['Default']['numbers_to_learn'])
         self.seq_a = config['Default']['seq_a'].split(',')
         self.seq_b = config['Default']['seq_b'].split(',')
+        
+        self.max_stay_in_control = int(config['Default']['max_stay_in_control'])
+        self.current_stay_in_control = 0
+        
         if reverse_seq:
             self.seq_a = self.seq_a[::-1]
             self.seq_b = self.seq_b[::-1]
         
-        print(self.seq_a)
         self.dict_seq_a = self.make_dictionaries(self.seq_a)
         self.dict_seq_b = self.make_dictionaries(self.seq_b)
         self.our_seq = "A"
@@ -73,11 +76,14 @@ class test_logic(QObject):
             if randomizator <= self.percent_change and self.our_seq == "A":
                 change = True
                 new_position = self.dict_seq_b[combination]
-            elif randomizator > self.percent_change and self.our_seq == "B":
+            elif (randomizator > self.percent_change or self.current_stay_in_control >= self.max_stay_in_control)   and self.our_seq == "B":
                 change = True
+                self.current_stay_in_control = 0
                 new_position = self.dict_seq_a[combination]
             else:
                 new_position = self.position
+                if self.our_seq == "B":
+                    self.current_stay_in_control +=1
         else:
             new_position = self.position
         new_position = (new_position + 1) % 12
@@ -93,6 +99,7 @@ class test_logic(QObject):
     def start_testing(self, user_name, date_birth):
         self.user_name = user_name
         self.date_birth = date_birth
+        print("User data: ", user_name, date_birth)
         
     def emit_number(self):
         if self.numbers_shown > self.repeats:
@@ -100,14 +107,12 @@ class test_logic(QObject):
             return
         
         self.start_time = self.timer()
-        print("Sending square element", str(self.return_current_el()))
         self.number_to_show_event.emit(self.return_current_el())
         
     def timer(self):
         return dt.datetime.now()
         
     def match_check(self, key):
-        print("recieved key to record:", key)
         # тайминг
         self.stop_time = self.timer()
         ping = self.stop_time - self.start_time
@@ -127,7 +132,7 @@ class test_logic(QObject):
         hash_user = hashlib.md5(user_name_birth.encode()).hexdigest()[:15]
         with open('user_to_hash.txt', 'a') as user_to_hash:
             user_to_hash.write(f"{user_name_birth}\t{hash_user}\n")
-        results_file_name = f'res_{hash_user}.txt'
+        results_file_name = f'res_{hash_user}.tsv'
         with open(results_file_name, 'w') as out_file:
             out_file.write('SeqA:\t'+','.join(str(el) for el in self.seq_a)+'\n')
             out_file.write('SeqB:\t'+','.join(str(el) for el in self.seq_b)+'\n')

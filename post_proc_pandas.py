@@ -27,11 +27,16 @@ def post_processing(results_file_name):
         df.loc[df["Right_answer"]==i, "Normalized_RT"] = df["RT"] / means_by_buttons[i-1]
     
     df["ReactionRatio_to_latest_control"] = -1
+    
     for i in range(len(df)):
         if df.iloc[i]["Sequence"] == "A":
             j = find_prev_B(df,i)
             if j>=0:
-                df.iloc[i]["ReactionRatio_to_latest_control"] = df.iloc[i]["Normalized_RT"] / df.iloc[j]["Normalized_RT"]
+                ratio = df.iloc[i]["Normalized_RT"] / df.iloc[j]["Normalized_RT"]
+                print(f"UpdatingRTRatio {ratio} for {i}")
+                
+                df.iat[i, df.columns.get_loc("ReactionRatio_to_latest_control")] = ratio
+                #df.iloc[i][] = ratio
     
     print(df)
     
@@ -43,8 +48,9 @@ def find_prev_B(df,i):
     Returns -1 is not found
     '''
     key = df.iloc[i]["Right_answer"]
-    j=i-1
+    j=i
     while j>=0:
+        j_key = df.iloc[j]["Right_answer"]
         if df.iloc[j]["Sequence"] == "B" and df.iloc[j]["Right_answer"] == key:
             break
         j -= 1
