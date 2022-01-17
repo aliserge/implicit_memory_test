@@ -136,3 +136,7 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# Output data
+user_to_hash.txt
+*.tsv

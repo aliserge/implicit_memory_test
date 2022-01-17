@@ -1,15 +1,12 @@
 #!/usr/bin/python3
 
-import os
-
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit, QGridLayout, QVBoxLayout, QMessageBox, QHBoxLayout, QSizePolicy
-from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QEventLoop, QTimer
+from PyQt5.QtWidgets import QWidget, QPushButton, QGridLayout, QMessageBox, QSizePolicy
+from PyQt5.QtCore import Qt, pyqtSignal, QEventLoop, QTimer
 from PyQt5.QtGui import QPalette
-
 from PyQt5.QtMultimedia import QSound
-from user_input import User_input
 
-sound_dir = 'sounds'
+from ui.user_input import User_input
+from resources import srt_resources
 
 class Graphic(QWidget):
     next_element_needed = pyqtSignal()
@@ -21,17 +18,18 @@ class Graphic(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
-        self.sounds = [QSound(os.path.join(sound_dir, "one.wav")),
-            QSound(os.path.join(sound_dir, "two.wav")),
-            QSound(os.path.join(sound_dir, "three.wav")),
-            QSound(os.path.join(sound_dir, "four.wav")) ]
+
+        self.sounds = [QSound(":sounds/one.wav"),
+                       QSound(":sounds/two.wav"),
+                       QSound(":sounds/three.wav"),
+                       QSound(":sounds/four.wav") ]
+        
         self.red = QPalette()
         self.red.setColor(QPalette.Button, Qt.red)
         self.green = QPalette()
         self.green.setColor(QPalette.Button, Qt.green)
         self.neutral = QPalette()
-        
-        
+              
     def initUI(self):
         self.layout = QGridLayout()
         self.setLayout(self.layout)
@@ -57,6 +55,11 @@ class Graphic(QWidget):
         self.btns[3].clicked.connect(self.btn_4)
         
         self.showMaximized()
+
+    def sleep(self):
+        loop = QEventLoop()
+        QTimer.singleShot(self.sleep_time, loop.quit)
+        loop.exec_()
 
     def btn_start_clicked(self):
         self.user_name_date.hide()
@@ -91,9 +94,7 @@ as accurate and rapid as possible""")
         for btn in self.btns:
             btn.setEnabled(False)
         
-        loop = QEventLoop()
-        QTimer.singleShot(self.sleep_time, loop.quit)
-        loop.exec_()
+        self.sleep()
         
         for btn in self.btns:
             btn.setEnabled(True)
@@ -107,7 +108,6 @@ as accurate and rapid as possible""")
         self.close()
         
     def play_element(self, n):
-        print("Play element ",n)
         n = int(n)-1
         self.sounds[n].play()
         

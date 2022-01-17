@@ -5,7 +5,7 @@ import time
 import hashlib
 from configparser import ConfigParser
 from collections import namedtuple
-from post_proc_pandas import post_processing
+from logic.post_proc_pandas import post_processing
 
 class test_logic(QObject):
     number_to_show_event = pyqtSignal(str)
@@ -102,7 +102,7 @@ class test_logic(QObject):
         print("User data: ", user_name, date_birth)
         
     def emit_number(self):
-        if self.numbers_shown > self.repeats:
+        if self.numbers_shown >= self.repeats:
             self.test_ended.emit()
             return
         

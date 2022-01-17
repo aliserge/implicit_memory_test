@@ -1,0 +1,12 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>../sounds/one.wav</file>
+    <file>../sounds/two.wav</file>
+    <file>../sounds/three.wav</file>
+    <file>../sounds/four.wav</file>
+    
+    <file>../sounds/positive-notification.wav</file>
+    <file>../sounds/wrong-answer.wav</file>
+    
+</qresource>
+</RCC>

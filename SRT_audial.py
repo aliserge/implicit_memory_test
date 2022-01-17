@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
 from PyQt5.QtWidgets import QApplication
-from graphics_audial import Graphic
-from logic import test_logic
+from ui.graphics_audial import Graphic
+from logic.logic import test_logic
+from logic.logcatcher import set_log_catcher
+
+set_log_catcher()
 
 app = QApplication([])
 first_window = Graphic()
