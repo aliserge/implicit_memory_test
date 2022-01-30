@@ -2,14 +2,14 @@
 
 from PyQt5.QtWidgets import QApplication
 from ui.graphics_audial import Graphic
-from logic.logic import test_logic
+from logic.logic import Test_Logic
 from logic.logcatcher import set_log_catcher
 
 set_log_catcher()
 
 app = QApplication([])
 first_window = Graphic()
-logic = test_logic(parent = first_window, reverse_seq=True)
+logic = Test_Logic(parent=first_window)
 
 first_window.start_event.connect(logic.start_testing)
 first_window.next_element_needed.connect(logic.emit_number)
@@ -24,5 +24,3 @@ logic.play_sound_signal.connect(first_window.color_buttons)
 app.exec_()
 
 logic.print_results()
-
-

@@ -1,11 +1,9 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout, QSizePolicy, QDateEdit
-from PyQt5.QtCore import Qt
 
 class User_input(QWidget):
     def __init__(self):
         super().__init__()
-        self.initUI()
-    def initUI(self):
+
         central = QVBoxLayout()
         name_lbl = QLabel('Name:')
         name_lbl.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
@@ -14,14 +12,13 @@ class User_input(QWidget):
         self.name_line.textChanged.connect(self.check_name_correctness)
         # move
         date_birth_lbl = QLabel('Date of birth:')
-        self.date_birth_line = QDateEdit() #QLineEdit()
+        self.date_birth_line = QDateEdit()
         self.date_birth_line.setCalendarPopup(True)
-        
-        
+
         self.start_btn = QPushButton('Start')
         #self.start_btn.clicked.connect(self.start_pressed)
         self.start_btn.setEnabled(False)
-        
+
         central.addStretch()
         central.addWidget(name_lbl)
         central.addWidget(self.name_line)
@@ -41,4 +38,4 @@ class User_input(QWidget):
         self.start_btn.setEnabled(False)
         
     def user_data(self):
-        return self.name_line.text() ,self.date_birth_line.date().toString()
+        return self.name_line.text(), self.date_birth_line.date().toString('yyyy-MM-dd')
