@@ -46,31 +46,31 @@ class Sequence_generator_window(QWidget):
         grid.addWidget(self.seq_b, row, 1)
         row += 1
 
-        random_repeats_label = QLabel("Number of random repeats:")
+        random_repeats_label = QLabel("Number of random repeats cycles:")
         self.random_repeats = QSpinBox()
         self.random_repeats.setMinimum(1)
         self.random_repeats.setMaximum(10)
         self.random_repeats.setValue(4)
+        self.random_repeats.setToolTip("The final number of elements is number of cycles multiplied by 4")
         grid.addWidget(random_repeats_label, row, 0)
         grid.addWidget(self.random_repeats, row, 1)
         row += 1
 
-        learn_repeats_label = QLabel("Number of learn repeats circles:")
+        learn_repeats_label = QLabel("Number of learn elements:")
         self.learn_repeats = QSpinBox()
-        self.learn_repeats.setMinimum(1)
-        self.learn_repeats.setMaximum(10)
-        self.learn_repeats.setValue(4)
+        self.learn_repeats.setMinimum(12)
+        self.learn_repeats.setMaximum(48)
+        self.learn_repeats.setValue(24)
         grid.addWidget(learn_repeats_label, row, 0)
         grid.addWidget(self.learn_repeats, row, 1)
         row += 1
 
-        repeats_label = QLabel("Maximum test length:")
+        test_repeats_label = QLabel("Maximum test length:")
         self.test_repeats = QSpinBox()
         self.test_repeats.setMinimum(1)
-        self.test_repeats.setMaximum(5000)
-        self.test_repeats.setValue(600)
-        self.test_repeats.setSingleStep(10)
-        grid.addWidget(repeats_label, row, 0)
+        self.test_repeats.setMaximum(600)
+        self.test_repeats.setValue(144)
+        grid.addWidget(test_repeats_label, row, 0)
         grid.addWidget(self.test_repeats, row, 1)
         row += 1
 

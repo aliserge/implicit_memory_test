@@ -26,7 +26,7 @@ class Test_Strategy_Learn(object):
         return self
 
     def __next__(self):
-        if self.numbers_shown >= self.length * self.count:
+        if self.numbers_shown >= self.count:
             raise StopIteration
         el = 'L', self.position, self.seq[self.position]
 
@@ -54,7 +54,7 @@ class Test_Strategy_Kaufman(object):
         return self
 
     def __next__(self):
-        if self.numbers_shown >= self.repeats * len(self.seq_a):
+        if self.numbers_shown >= self.repeats:
             raise StopIteration
         element = self.our_seq, self.position, self.return_current_el()
         self.choose_next_el()
