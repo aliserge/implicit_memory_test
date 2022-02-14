@@ -18,21 +18,29 @@ class Test_Logic(QObject):
     test_ended = pyqtSignal()
     play_sound_signal = pyqtSignal(str)
 
-
-
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.user_name = "user_name_default"
+        self.date_birth = "date_birth_default"
+
         config = ConfigParser()
+
         config.read(config_file_name)
         self.key_info = []
+        try:
+            self.seq_a = config['Sequences']['seq_a']
+            self.seq_b = config['Sequences']['seq_b']
 
-        self.seq_a = config['Sequences']['seq_a']
-        self.seq_b = config['Sequences']['seq_b']
+            self.random_repeats = int(config['Settings']['random_repeats'])
+            self.learn_repeats = int(config['Settings']['learn_repeats'])
+            self.test_repeats = int(config['Settings']['test_repeats'])
+            data_file_name = config['Datafile']['data_file_name']
+        except KeyError:
+            print("No config file provided for the application.")
+            exit()
 
-        self.random_repeats = int(config['Settings']['random_repeats'])
-        self.learn_repeats = int(config['Settings']['learn_repeats'])
-        self.test_repeats = int(config['Settings']['test_repeats'])
-        data_file_name = config['Datafile']['data_file_name']
+
         with open(data_file_name, 'rb') as data_file:
             self.seq_random = pickle.load(data_file)
             self.seq_learn = pickle.load(data_file)
@@ -45,7 +53,7 @@ class Test_Logic(QObject):
     def start_testing(self, user_name, date_birth):
         self.user_name = user_name
         self.date_birth = date_birth
-        print("User data: ", user_name, date_birth)
+        print(f"User information recorded: {user_name}, {date_birth}")
         self.current_number = 0
 
     def emit_number(self):
@@ -66,13 +74,16 @@ class Test_Logic(QObject):
         ping = self.stop_time - self.start_time
         correctness = (key == self.current_element)
         key_record = User_Record(Sequence=self.our_seq, Position=self.position, Right_answer=self.current_element,
-                                      User_answer=key, Correctness=correctness, Start_time=self.start_time,
-                                      Stop_time=self.stop_time, RT=ping.total_seconds())
+                                 User_answer=key, Correctness=correctness, Start_time=self.start_time,
+                                 Stop_time=self.stop_time, RT=ping.total_seconds())
         self.key_info.append(key_record)
         self.current_number += 1
         self.play_sound_signal.emit(str(correctness))
 
     def print_results(self):
+        if len(self.key_info) == 0:
+            print("No user answers were recorded - nothing to output")
+            return
         user_name_birth = self.user_name + ' ' + self.date_birth
         hash_user = hashlib.md5(user_name_birth.encode()).hexdigest()[:15]
         current_date = dt.datetime.now().strftime("%Y-%m-%d_%H-%M")

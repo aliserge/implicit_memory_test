@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
+from logic.logcatcher import set_log_catcher
+set_log_catcher()
 
-from PyQt5.QtWidgets import QApplication
+try:
+    from PyQt5.QtWidgets import QApplication
+    from PyQt5.QtCore import PYQT_VERSION_STR
+except ImportError:
+    print("Can't import PyQt5 library")
+    exit(-1)
+
+print(f'PyQt: {PYQT_VERSION_STR}')
+
 from ui.graphics_visual import Graphic
 from logic.logic import Test_Logic
-from logic.logcatcher import set_log_catcher
-
-set_log_catcher()
 
 app = QApplication([])
 first_window = Graphic()

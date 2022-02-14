@@ -22,10 +22,10 @@ def post_processing(results_file_name, skip=3):
             (seq, pos, right_answer, user_answer, correctness, start_time, stop_time, RT) = t.strip().split('\t')
             pos = int(pos)
             right_answer = int(right_answer)
-            user_answer = int (user_answer)
+            user_answer = user_answer
             correctness = correctness == "True"
-            #start_time = dt.datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S.%f')
-            #stop_time = dt.datetime.strptime(stop_time, '%Y-%m-%d %H:%M:%S.%f')
+            start_time = dt.datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S.%f')
+            stop_time = dt.datetime.strptime(stop_time, '%Y-%m-%d %H:%M:%S.%f')
             RT = float(RT)
             df.append({'Sequence':seq, 'Position':pos, 'Right_answer':right_answer,
                     'User_answer':user_answer, 'Correctness':correctness, 'Start_time':start_time,
@@ -35,15 +35,18 @@ def post_processing(results_file_name, skip=3):
     df = list(filter(lambda x: x['Sequence'] in ["A","B"], df))
 
     # Throwing away all incorrect elements
-    df = list(filter(lambda x: x['Correctness'] == True, df ))
+    df = list(filter(lambda x: x['Correctness'] == True, df))
+
+    if len(df) == 0:
+        print("No valid results found after data filtering and processing. Nothing to output.")
+        return
 
     # Collecting Delta values by buttons
     answers = [list(filter(lambda x: x['Right_answer'] == i, df)) for i in range(1, 5)]
-    rt_by_buttons = [list(map(lambda x: x['RT'], button)) for button in answers]
 
-    # Calculating meen value buttons
-    means_by_buttons = [statistics.mean(rt) for rt in rt_by_buttons]
-    print(means_by_buttons)
+    rt_by_buttons = [list(map(lambda x: x['RT'], button)) for button in answers]
+    # Calculating mean value buttons
+    means_by_buttons = [(statistics.mean(rt) if len(rt) > 0 else 1) for rt in rt_by_buttons]
 
     for i in range(len(df)):
         # Creating new column with normalized RT
@@ -67,7 +70,6 @@ def post_processing(results_file_name, skip=3):
             processed_file.write('\t'.join([str(s) for s in  measure.values()]) + '\n')
 
 
-
 def find_prev_B(df, i):
 
     # Finds in dataframe control button from B sequence with the same button
@@ -81,10 +83,7 @@ def find_prev_B(df, i):
         j -= 1
     return j
 
-    '''
-    df.to_csv(, sep='\t')
 
-'''
 if __name__ == "__main__":
     post_processing(sys.argv[1])
 

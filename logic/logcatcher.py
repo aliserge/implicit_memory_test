@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 import sys
-import io
+import platform
 import logging
-import traceback
+
+def print_info():
+    print(f"Running python {sys.version}")
+    print(f"Operating at {platform.system()}, {platform.release()} - {platform.version()}")
+
 
 class StreamToLogger(object):
     """
@@ -28,7 +32,7 @@ def set_log_catcher(log_name=sys.argv[0]+'.log'):
     sys.stdout = sl
     sl = StreamToLogger(log, logging.ERROR)
     sys.stderr = sl
-  
+    print_info()
     '''    
     # Separate exception handler with custom logging options
     def my_handler(exc_type, exc_obj, tb):
@@ -38,6 +42,8 @@ def set_log_catcher(log_name=sys.argv[0]+'.log'):
     # Install exception handler
     sys.excepthook = my_handler
     '''
+
+
 
 # Test log catcher
 if __name__ == "__main__":
